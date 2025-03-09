@@ -63,7 +63,7 @@ pipeline {
                         npm version $versionBump -m "Bump version to %s [skip ci]"
 
                         # Push the commit and tag
-                        git push origin HEAD:\$CURRENT_BRANCH --tags
+                        git push origin \$CURRENT_BRANCH --tags
 
                         # Publish the package to NPM
                         npm publish --access public
