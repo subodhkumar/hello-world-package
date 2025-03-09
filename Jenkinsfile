@@ -65,6 +65,9 @@ pipeline {
                         git push origin main
                         git push origin --tags
 
+
+                        npm whoami
+                        
                         # Publish the package to NPM
                         npm publish --access public
                     """
