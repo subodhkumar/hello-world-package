@@ -53,17 +53,16 @@ pipeline {
                         #!/bin/bash
                         set -e
 
-                        CURRENT_BRANCH=\$(git symbolic-ref --short HEAD || git branch --show-current)
-
-                        # Ensure we have the latest changes
-                        git pull --rebase origin \$CURRENT_BRANCH
+                        # Ensure we're on the main branch
+                        git checkout main
+                        git pull --rebase origin main
 
                         # Bump version and commit the change
-                        git add package.json
                         npm version $versionBump -m "Bump version to %s [skip ci]"
+                        git add package.json
 
                         # Push the commit and tag
-                        git push origin \$CURRENT_BRANCH
+                        git push origin main
                         git push origin --tags
 
                         # Publish the package to NPM
@@ -72,7 +71,6 @@ pipeline {
                 }
             }
         }
-
 
         stage('Post Publish Cleanup') {
             steps {
