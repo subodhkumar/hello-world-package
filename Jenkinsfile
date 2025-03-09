@@ -36,7 +36,6 @@ pipeline {
                     sh '''
                         #!/bin/bash
                         set -e # Exit immediately if a command exits with a non-zero status
-                        set -o pipefail # Ensures pipeline errors are properly handled
 
                         # Set npm authentication token for publishing
                         npm config set //registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN
@@ -58,7 +57,6 @@ pipeline {
                     sh '''
                         #!/bin/bash
                         set -e # Stop the script if any command fails
-                        set -o pipefail # Catch errors in pipelines
 
                         # Read the user-provided version bump type (patch, minor, or major)
                         VERSION_BUMP=${params.VERSION_BUMP}
