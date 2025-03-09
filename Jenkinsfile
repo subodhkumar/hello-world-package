@@ -37,8 +37,8 @@ pipeline {
                         set -e
 
                         npm config set //registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN
-                        git config user.email "jenkins@example.com"
-                        git config user.name "Jenkins CI"
+                        git config user.email "subodhkumarjc@gmail.com"
+                        git config user.name "subodhkumar"
                         git remote set-url origin https://$GITHUB_PAT@github.com/subodhkumar/hello-world-package.git
                     '''
                 }
