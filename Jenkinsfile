@@ -70,6 +70,7 @@ pipeline {
 
                     // Only commit & push if publish succeeds
                     sh """
+                        git tag ${newVersion}
                         git push origin main
                         git push origin ${newVersion}
                     """
