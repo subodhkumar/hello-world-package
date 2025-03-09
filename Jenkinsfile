@@ -19,13 +19,13 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                sh 'npm ci'  // More reliable than `npm install`
             }
         }
 
-        stage('Run Package') {
+        stage('Run Tests') {
             steps {
-                sh 'npm run start'
+                sh 'npm test'  // Ensure package works before publishing
             }
         }
 
@@ -36,48 +36,56 @@ pipeline {
                         #!/bin/bash
                         set -e
 
-                        npm config set //registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN
+                        echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
                         git config user.email "subodhkumarjc@gmail.com"
                         git config user.name "subodhkumar"
-                        git remote set-url origin https://$GITHUB_PAT@github.com/subodhkumar/hello-world-package.git
+                        git remote set-url origin https://${GITHUB_PAT}@github.com/subodhkumar/hello-world-package.git
                     '''
                 }
             }
         }
 
-        stage('Bump Version, Commit & Publish') {
+        stage('Bump Version & Publish') {
             steps {
                 script {
                     def versionBump = params.VERSION_BUMP
-                    sh """
+                    def newVersion = sh(script: "npm version ${versionBump} --no-git-tag-version", returnStdout: true).trim()
+                    
+                    sh '''
                         #!/bin/bash
                         set -e
 
-                        # Ensure we're on the main branch
-                        git checkout main
-                        git pull --rebase origin main
+                        # Ensure we're on the correct branch
+                        git rev-parse --abbrev-ref HEAD | grep -q '^main$' || git checkout main
+                        git pull --rebase origin main || git rebase --abort
 
-                        # Bump version and commit the change
-                        npm version $versionBump -m "Bump version to %s [skip ci]"
-                        git add package.json
-
-                        # Push the commit and tag
-                        git push origin main
-                        git push origin --tags
-
+                        # Publish the package first
                         npm whoami
-
-                        # Publish the package to NPM
                         npm publish --access public
+                    '''
+
+                    // Only commit & push if publish succeeds
+                    sh """
+                        git add package.json package-lock.json
+                        git commit -m "Bump version to ${newVersion} [skip ci]"
+                        git tag ${newVersion}
+                        git push origin main
+                        git push origin ${newVersion}
                     """
                 }
             }
         }
+    }
 
-        stage('Post Publish Cleanup') {
-            steps {
-                sh 'npm config delete //registry.npmjs.org/:_authToken'
-            }
+    post {
+        success {
+            echo '✅ Release successful!'
+        }
+        failure {
+            echo '❌ Build failed! Check logs for details.'
+        }
+        always {
+            sh 'rm -f ~/.npmrc'  // Cleanup credentials securely
         }
     }
 }
