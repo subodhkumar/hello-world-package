@@ -53,7 +53,7 @@ pipeline {
                         #!/bin/bash
                         set -e
 
-                        CURRENT_BRANCH=\$(git rev-parse --abbrev-ref HEAD)
+                        CURRENT_BRANCH=\$(git symbolic-ref --short HEAD || git branch --show-current)
 
                         # Ensure we have the latest changes
                         git pull --rebase origin \$CURRENT_BRANCH
@@ -63,7 +63,8 @@ pipeline {
                         npm version $versionBump -m "Bump version to %s [skip ci]"
 
                         # Push the commit and tag
-                        git push origin \$CURRENT_BRANCH --tags
+                        git push origin \$CURRENT_BRANCH
+                        git push origin --tags
 
                         # Publish the package to NPM
                         npm publish --access public
@@ -71,6 +72,7 @@ pipeline {
                 }
             }
         }
+
 
         stage('Post Publish Cleanup') {
             steps {
