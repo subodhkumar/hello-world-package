@@ -65,9 +65,9 @@ pipeline {
                         git push origin main
                         git push origin --tags
 
-
+                        echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
                         npm whoami
-                        
+
                         # Publish the package to NPM
                         npm publish --access public
                     """
