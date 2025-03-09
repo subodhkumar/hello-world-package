@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    parameters {
+        choice(name: 'VERSION_BUMP', choices:['patch','minor','major'], description: 'Version bump type');
+    }
     stages {
         stage('Checkout') {
             steps {
