@@ -59,7 +59,7 @@ pipeline {
                         git pull --rebase origin \$CURRENT_BRANCH
 
                         # Bump version and commit the change
-                        git add package.json package-lock.json
+                        git add package.json
                         npm version $versionBump -m "Bump version to %s [skip ci]"
 
                         # Push the commit and tag
