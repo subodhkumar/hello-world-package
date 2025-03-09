@@ -40,11 +40,11 @@ pipeline {
         }
         stage('Commit & Push Version Update'){
             steps {
-                def newVersion = sh(script: "node -p \"require('./package.json').version\"", returnStdout: true).trim();
+                env.NEW_VERSION = sh(script: "node -p \"require('./package.json').version\"", returnStdout: true).trim();
                 sh """
                     git add package.json
-                    git commit -m "Bump version to ${newVersion}"
-                    git tag "v${newVersion}"
+                    git commit -m "Bump version to ${env.NEW_VERSION}"
+                    git tag "v${env.NEW_VERSION}"
                     git push origin HEAD:master --tags
                 """
             }
