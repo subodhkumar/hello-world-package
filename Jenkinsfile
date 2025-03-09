@@ -55,6 +55,10 @@ pipeline {
                         #!/bin/bash
                         set -e
 
+                        # Commit version bump before switching branches
+                        git add package.json package-lock.json
+                        git commit -m "Bump version before branch switch"
+
                         # Ensure we're on the correct branch
                         git rev-parse --abbrev-ref HEAD | grep -q '^main$' || git checkout main
                         git pull --rebase origin main || git rebase --abort
@@ -66,12 +70,10 @@ pipeline {
 
                     // Only commit & push if publish succeeds
                     sh """
-                        git add package.json package-lock.json
-                        git commit -m "Bump version to ${newVersion} [skip ci]"
-                        git tag ${newVersion}
                         git push origin main
                         git push origin ${newVersion}
                     """
+
                 }
             }
         }
