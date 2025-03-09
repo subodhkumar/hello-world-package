@@ -53,17 +53,17 @@ pipeline {
                         #!/bin/bash
                         set -e
 
-                        CURRENT_BRANCH=\$(git rev-parse --abbrev-ref HEAD)
+                        // CURRENT_BRANCH=\$(git rev-parse --abbrev-ref HEAD)
 
                         # Ensure we have the latest changes
-                        git pull --rebase origin \$CURRENT_BRANCH
+                        // git pull --rebase origin \$CURRENT_BRANCH
 
                         # Bump version and commit the change
                         git add package.json
                         npm version $versionBump -m "Bump version to %s [skip ci]"
 
                         # Push the commit and tag
-                        git push origin HEAD:\$CURRENT_BRANCH --tags
+                        git push origin HEAD:main --tags
 
                         # Publish the package to NPM
                         npm publish --access public
