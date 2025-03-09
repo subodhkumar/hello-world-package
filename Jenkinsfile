@@ -25,14 +25,19 @@ pipeline {
         }
         stage('Set authentication') {
             steps {
-                sh 'npm config set //registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}'
-                sh """
-                    git config --global user.email "subodhkumarjc@gmail.com"
-                    git config --global user.name "Jenkins CI"
-                    git remote set-url origin https://${GITHUB_PAT}@github.com/subodhkumar/hello-world-package.git
-                """
+                script {
+                    sh '''
+                        #!/bin/bash
+                        set -e
+                        npm config set //registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN
+                        git config --global user.email "subodhkumarjc@gmail.com"
+                        git config --global user.name "Jenkins CI"
+                        git remote set-url origin https://$GITHUB_PAT@github.com/subodhkumar/hello-world-package.git
+                    '''
+                }
             }
         }
+        /*
         stage('Update Version'){
             steps {
                 sh 'npm version ${params.VERSION_BUMP} --no-commit-hooks --no-git-tag-version'
@@ -50,7 +55,7 @@ pipeline {
                     """
                 }
             }
-        }
+        } */
         stage('Post Publish cleanup'){
             steps {
                 sh 'npm config delete //registry.npmjs.org/:_authToken'
