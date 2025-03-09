@@ -29,7 +29,7 @@ pipeline {
                 sh """
                     git config --global user.email "subodhkumarjc@gmail.com"
                     git config --global user.name "Jenkins CI"
-                    git config set-url origin https://${GITHUB_PAT}@github.com/subodhkumar/hello-world-package.git
+                    git remote set-url origin https://${GITHUB_PAT}@github.com/subodhkumar/hello-world-package.git
                 """
             }
         }
